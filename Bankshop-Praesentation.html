@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dein Weg mit Bankshop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: Vollbild-Präsentation, 5 Folien nebeneinander, Navy-Bühne, links Botschaft, rechts Live-Rechnung; unten Fortschritt und Pfeile */
+:root{
+  --stage:#0f2240; --stage2:#16305a; --ink:#ffffff; --muted:#aebbd4; --line:rgba(255,255,255,.16);
+  --card:#ffffff; --cink:#14213a; --cmuted:#56637c; --cline:#d8dfea;
+  --accent:#e8762c; --accent-soft:#fdebdd; --accent-ink:#9a4410; --good:#1d8a5a; --good-soft:#dff3e9;
+  --f-sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--stage);color:var(--ink);font-family:var(--f-sans);font-size:16px;line-height:1.5;overflow:hidden}
+.deck{position:relative;height:100%;display:flex;flex-direction:column}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:14px 6px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px}
+.brand .mark{display:grid;grid-template-columns:repeat(2,9px);gap:3px}
+.brand .mark i{width:9px;height:9px;background:#fff;display:block}
+.brand .mark i:nth-child(4){background:var(--accent)}
+.brand small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+.counter{font-family:var(--f-num);font-size:13px;color:var(--muted)}
+.viewport{flex:1 1 auto;overflow:hidden;position:relative;min-height:0}
+.track{display:flex;height:100%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){.track{transition:none}}
+.slide{flex:0 0 100%;height:100%;overflow-y:auto;padding-block:10px 24px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.inner{max-width:1100px;margin:0 auto;min-height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,56px);align-items:center}
+@media (max-width:820px){.inner{grid-template-columns:minmax(0,1fr);align-items:start;gap:18px}}
+.step{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-num);font-size:13px;color:var(--accent);font-weight:600;letter-spacing:.04em}
+.step b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:14px}
+h1{margin:12px 0 10px;font-size:clamp(30px,5.2vw,56px);line-height:1.03;letter-spacing:-.015em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.lead{margin:0 0 18px;font-size:clamp(16px,1.6vw,19px);color:#dbe3f1;max-width:46ch}
+.points{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.points li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start;font-size:16px}
+.points li svg{margin-top:3px}
+.points b{color:#fff}
+
+.panel{background:var(--card);color:var(--cink);border-radius:18px;padding:clamp(18px,2.4vw,28px);display:grid;gap:16px;box-shadow:0 24px 60px rgba(0,0,0,.35);min-width:0}
+.panel .pk{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--cmuted)}
+.big{font-family:var(--f-num);font-weight:600;font-size:clamp(34px,5vw,54px);line-height:1;color:var(--cink);font-variant-numeric:tabular-nums}
+.big small{font-family:var(--f-sans);font-size:15px;font-weight:500;color:var(--cmuted);margin-left:6px}
+.ctl{display:grid;gap:6px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:600;font-size:15px}
+.ctl output{font-family:var(--f-num);font-size:18px;color:var(--accent-ink)}
+input[type=range]{width:100%;accent-color:var(--accent);height:30px;margin:0}
+input[type=range]:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.calc{font-family:var(--f-num);font-size:14px;background:#f3f5f9;border-radius:10px;padding:10px 12px;display:grid;gap:4px;font-variant-numeric:tabular-nums}
+.calc div{display:flex;justify-content:space-between;gap:12px}
+.calc .t{border-top:1px solid var(--cline);padding-top:6px;margin-top:2px;font-weight:600}
+.calc span:first-child{color:var(--cmuted)}
+.calc .t span:first-child{color:var(--cink)}
+.note{font-size:13px;color:var(--cmuted);margin:0}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;border-radius:99px;padding:4px 12px;width:max-content;max-width:100%}
+.pill.ok{background:var(--good-soft);color:var(--good)}
+.pill.no{background:var(--accent-soft);color:var(--accent-ink)}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cbox{border:1px solid var(--cline);border-radius:12px;padding:12px;display:grid;gap:4px}
+.cbox.on{border-color:var(--accent);background:var(--accent-soft)}
+.cbox span{font-size:13px;color:var(--cmuted)}
+.cbox b{font-family:var(--f-num);font-size:24px}
+.cbox small{font-size:12px;color:var(--cmuted)}
+
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:110px minmax(0,1fr) 92px;gap:10px;align-items:center;font-size:13px}
+.bar .tr{height:14px;background:#e6ebf3;border-radius:99px;overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:99px;transition:width .35s ease}
+.bar .v{font-family:var(--f-num);font-weight:600;text-align:right}
+@media (max-width:420px){.bar{grid-template-columns:88px minmax(0,1fr) 80px}}
+
+.tree{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:30px}
+.dot{width:22px;height:22px;border-radius:50%;background:var(--cink);display:inline-block;transition:transform .2s}
+.dot.me{background:var(--accent);width:28px;height:28px}
+.dot.e{width:14px;height:14px;background:#93aad2}
+
+.rules{display:grid;gap:10px}
+.rule{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;border:1px solid var(--cline);border-radius:12px;padding:10px 12px}
+.rule .ic{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent-ink)}
+.rule b{display:block}
+.rule span{font-size:14px;color:var(--cmuted)}
+.staffel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.st{border:1px solid var(--cline);border-radius:10px;padding:8px;text-align:center}
+.st b{display:block;font-family:var(--f-num);font-size:18px}
+.st span{font-size:12px;color:var(--cmuted)}
+.st.on{border-color:var(--good);background:var(--good-soft)}
+
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px calc(14px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));border-top:1px solid var(--line)}
+.dots{display:flex;gap:6px;flex:1 1 auto;max-width:520px}
+.dots button{flex:1 1 0;border:0;background:transparent;padding:8px 0;cursor:pointer;display:grid;gap:6px;color:var(--muted);font:inherit;font-size:12px;text-align:left;min-width:0}
+.dots button i{display:block;height:4px;border-radius:99px;background:var(--line)}
+.dots button.done i{background:var(--muted)}
+.dots button[aria-current="step"]{color:#fff;font-weight:600}
+.dots button[aria-current="step"] i{background:var(--accent)}
+.dots button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:600px){.dots button span{display:none}}
+.arrows{display:flex;gap:8px}
+.arrows button{font:inherit;font-weight:600;border:1px solid var(--line);background:transparent;color:#fff;border-radius:10px;padding:10px 16px;cursor:pointer;min-height:44px}
+.arrows button.go{background:var(--accent);border-color:var(--accent)}
+.arrows button:disabled{opacity:.35;cursor:default}
+.foot{font-size:11px;color:var(--muted);text-align:center;padding:0 20px 8px}
+a.link{color:var(--accent-ink);font-weight:600}
+.eh{font-family:var(--f-num);font-size:12px;color:var(--cmuted);margin-top:-8px}
+.warn{border-radius:10px;padding:10px 12px;background:#fbe4e4;color:#8c2626;font-size:14px;display:grid;gap:4px}
+.warn b{font-family:var(--f-num)}
+.warn.soft{background:#fff3d6;color:#7a4e00}
+[hidden]{display:none!important}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+.chk input{width:20px;height:20px;accent-color:var(--accent)}
+</style>
+<style>
+.topr{display:flex;align-items:center;gap:12px}
+.counter{white-space:nowrap}
+@media (max-width:480px){.brand small{display:none}.topr{gap:8px}}
+.reset{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:transparent;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;min-height:36px}
+.reset:hover{border-color:var(--accent)}
+.carry{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:-4px}
+.carry span{font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px;background:#eef2f8;color:var(--cmuted)}
+.carry span b{color:var(--cink);font-family:var(--f-num)}
+.carry:empty{display:none}
+.toast{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:#fff;color:var(--cink);border-radius:10px;padding:8px 14px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:20}
+.rulebox{display:inline-block;line-height:1.5;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:17px;margin:4px 0 14px;max-width:100%}
+.rulebox b{font-family:var(--f-num);color:var(--accent);font-size:19px;white-space:nowrap}
+.points li{font-size:17px}
+</style>
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="deck">
+  <div class="top">
+    <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>CEB Bankshop AG<small>Vermittlung von Bankdienstleistungen</small></span></div>
+    <div class="topr"><button type="button" class="reset" id="reset">Zurücksetzen</button><div class="counter" id="counter">1 / 7</div></div>
+  </div>
+
+  <div class="viewport">
+    <div class="track" id="track">
+
+      <!-- 1 -->
+      <section class="slide" aria-label="Schritt 1"><div class="inner">
+        <div>
+          <div class="step"><b>1</b>START</div>
+          <h1>Jeder Kunde bringt dir <em>Geld</em>.</h1>
+          <div class="rulebox">Als Newcomer: <b>15 € je Einheit</b></div>
+          <ul class="points">
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Ein Kunde = Ø <b>30 Einheiten</b> = <b>450 €</b></span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="ctl"><label for="k">Kunden pro Monat <output id="o_k"></output></label><input type="range" id="k" min="0" max="10" step="0.5" value="4"></div>
+          <div class="big" id="r1"></div>
+          <div class="eh" id="e1"></div>
+        </div>
+      </div></section>
+
+      <!-- 2 -->
+      <section class="slide" aria-label="Schritt 2"><div class="inner">
+        <div>
+          <div class="step"><b>2</b>TEAMLEITER</div>
+          <h1>Zwei Leute dabei: <em>Teamleiter</em>.</h1>
+          <div class="rulebox">Als Teamleiter: <b>22 € je Einheit</b></div>
+          <ul class="points">
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>300 EH</b> im Quartal (≈ 10 Kunden)</span></li>
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>2 aktive Newcomer</b> mit je 150 EH im Quartal (≈ 5 Kunden)</span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="carry" id="cy2"></div>
+          <div class="compare">
+            <div class="cbox"><span>Newcomer</span><b id="c2a"></b><small>pro Monat</small></div>
+            <div class="cbox on"><span>Teamleiter</span><b id="c2b"></b><small>pro Monat</small></div>
+          </div>
+          <div class="big" id="r2"></div>
+          <div class="eh" id="e2"></div>
+          <span class="pill" id="p2"></span>
+        </div>
+      </div></section>
+
+      <!-- 3 -->
+      <section class="slide" aria-label="Schritt 3"><div class="inner">
+        <div>
+          <div class="step"><b>3</b>EINSTEIGER</div>
+          <h1>Du verdienst an deinen <em>Newcomern</em> mit.</h1>
+          <div class="rulebox">Je Einheit deiner Newcomer: <b>5 €</b></div>
+          <ul class="points">
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Weitere <b>2 €</b> gehen an deine Führungskraft</span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="carry" id="cy3"></div>
+          <div class="ctl"><label for="n">Deine Newcomer <output id="o_n"></output></label><input type="range" id="n" min="0" max="10" step="1" value="2"></div>
+          <div class="tree" id="t3" aria-hidden="true"></div>
+          <div class="big" id="r3"></div>
+          <div class="eh" id="e3"></div>
+          <div class="calc" id="c3"></div>
+        </div>
+      </div></section>
+
+      <!-- 4 -->
+      <section class="slide" aria-label="Schritt 4"><div class="inner">
+        <div>
+          <div class="step"><b>4</b>TEAMLEITER AUFBAUEN</div>
+          <h1>Jeder Teamleiter bringt dir <em>über 1.000 €</em>.</h1>
+          <div class="rulebox">Von jedem deiner Teamleiter: <b>30 %</b> + <b>2 €</b> je EH seiner Newcomer</div>
+          <ul class="points">
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>30 % auf <b>alles</b>, was er verdient: eigene Kunden + Differenz</span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="carry" id="cy4"></div>
+          <div class="ctl"><label for="t">Deine Teamleiter <output id="o_t"></output></label><input type="range" id="t" min="0" max="12" step="1" value="4"></div>
+          <div class="ctl"><label for="g">Teamleiter, die jeder von ihnen hat <output id="o_g"></output></label><input type="range" id="g" min="0" max="5" step="1" value="0"></div>
+          <div class="big" id="r4"></div>
+          <div class="eh" id="e4"></div>
+          <div class="calc" id="c4"></div>
+        </div>
+      </div></section>
+
+      <!-- 5 -->
+      <section class="slide" aria-label="Schritt 5"><div class="inner">
+        <div>
+          <div class="step"><b>5</b>DEINE PFLICHT</div>
+          <h1>Dein Teamgeld gibt es, wenn du <em>selbst aktiv bist</em>.</h1>
+          <div class="rulebox">Differenz und 30 % bekommst du nur, wenn du <b>deine Pflicht</b> im Quartal schaffst.</div>
+          <ul class="points">
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Je mehr Teamleiter, desto <b>kleiner</b> die Pflicht</span></li>
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>1 Joker</b> pro Jahr für ein schwaches Quartal</span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="carry" id="cy5"></div>
+          <div class="pk">Deine Pflicht je Quartal</div>
+          <div class="staffel" id="s5"></div>
+          <div class="ctl"><label for="k5">Deine Kunden pro Monat <output id="o_k5"></output></label><input type="range" id="k5" min="0" max="10" step="0.5" value="4"></div>
+          <span class="pill" id="p5"></span>
+          <label class="chk" id="jw"><input type="checkbox" id="jk"> Joker einsetzen</label>
+          <div class="pk">Schritt 1 bis 4 zusammen</div>
+          <div class="calc" id="c5"></div>
+          <div class="eh" id="e5"></div>
+          <div class="warn" id="w5" hidden></div>
+        </div>
+      </div></section>
+
+      <!-- 6 -->
+      <section class="slide" aria-label="Schritt 6"><div class="inner">
+        <div>
+          <div class="step"><b>6</b>WENN EINER AUSFÄLLT</div>
+          <h1>Fällt ein Teamleiter aus, <em>übernimmst du sein Team</em>.</h1>
+          <div class="rulebox">Ohne Joker: <b>keine 30 %</b> von ihm, aber <b>30 %</b> von seinen Teamleitern</div>
+          <ul class="points">
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Seine Teamleiter zahlen direkt an <b>dich</b>, die Differenz seiner Newcomer auch</span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="carry" id="cy6"></div>
+          <div class="ctl"><label for="fl"><span id="fl_lab">Teamleiter, die ihr Quartal nicht schaffen</span> <output id="o_fl"></output></label><input type="range" id="fl" min="0" max="12" step="1" value="0"></div>
+          <div class="big" id="r6"></div>
+          <div class="eh" id="e6"></div>
+          <div class="calc" id="c6"></div>
+        </div>
+      </div></section>
+
+      <!-- 7 -->
+      <section class="slide" aria-label="Schritt 7"><div class="inner">
+        <div>
+          <div class="step"><b>7</b>DEIN MONAT</div>
+          <h1>Alles zusammen.</h1>
+          <ul class="points">
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Einmal Teamleiter, immer Teamleiter</b></span></li>
+            <li><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="#e8762c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Ohne Zulassung hilft ein <b>Fachmann</b> (10 % oder 30 % des Abschlusses)</span></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="carry" id="cy7"></div>
+          <div class="pk">Mit allem, was du eingestellt hast</div>
+          <div class="big" id="r7"></div>
+          <div class="eh" id="e7"></div>
+          <div class="bars" id="b7"></div>
+          <p class="note"><a class="link" href="https://claude.ai/artifact/YLQzhEj5LXFtFDZD4wexSw" target="_blank" rel="noopener">Eigenen Weg im Einkommens-Assistenten rechnen</a></p>
+        </div>
+      </div></section>
+
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="dots" id="dots" role="tablist" aria-label="Schritte"></div>
+    <div class="arrows">
+      <button type="button" id="prev">Zurück</button>
+      <button type="button" id="next" class="go">Weiter</button>
+    </div>
+  </div>
+  <div class="foot">Beispielrechnung vor Steuern, ohne Stornoabzug, keine Einkommensgarantie. Vergütung nur aus vermitteltem Produktumsatz.</div>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const e0=new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0});
+  const n0=new Intl.NumberFormat('de-DE',{maximumFractionDigits:0});
+  const EHK=30, BE=15, BP=22, DP=5, FK2=2, P=0.30, EIN=50;      // EIN = EH je Newcomer und Monat
+  const TL_BASE=100*BP+2*EIN*DP;                               // Teamleiter im Minimum: 2.700 € im Monat
+  const NAMES=['Start','Teamleiter','Newcomer','Teamleiter aufbauen','Pflicht','Ausfall','Dein Monat'];
+  const v=id=>+$(id).value, kz=x=>String(x).replace('.',',');
+  const eh=x=>`${n0.format(x)} EH im Monat · ${n0.format(x*3)} EH im Quartal`;
+
+  function render(){
+    const k=v('k'), n=v('n'), t=v('t'), g=v('g');
+    $('fl').max=String(t); const fl=Math.min(v('fl'),t); if(+$('fl').value>t) $('fl').value=t;
+    if(document.activeElement!==$('k5')) $('k5').value=k;
+    $('o_k').textContent=kz(k); $('o_k5').textContent=kz(k); $('o_n').textContent=n; $('o_t').textContent=t; $('o_g').textContent=g; $('o_fl').textContent=fl;
+    const own=k*EHK;
+    // 1
+    $('r1').innerHTML=`${e0.format(own*BE)}<small>pro Monat</small>`; $('e1').textContent=eh(own);
+    // 2
+    $('c2a').textContent=e0.format(own*BE); $('c2b').textContent=e0.format(own*BP);
+    $('r2').innerHTML=`+ ${e0.format(own*(BP-BE))}<small>mehr pro Monat</small>`; $('e2').textContent=eh(own);
+    const ok2=own*3>=300; $('p2').className='pill '+(ok2?'ok':'no'); $('p2').textContent=ok2?`${n0.format(own*3)} von 300 EH geschafft`:`${n0.format(own*3)} von 300 EH: es fehlen ${n0.format(300-own*3)}`;
+    // 3
+    const dif=n*EIN*DP;
+    $('t3').innerHTML='<i class="dot me"></i>'+Array.from({length:n},()=>'<i class="dot e"></i>').join('');
+    $('r3').innerHTML=`+ ${e0.format(dif)}<small>pro Monat</small>`; $('e3').textContent='Deine Newcomer: '+eh(n*EIN);
+    $('c3').innerHTML=`<div><span>Deine Kunden (${n0.format(own)} EH × 22 €)</span><span>${e0.format(own*BP)}</span></div><div><span>+ Differenz (${n0.format(n*EIN)} EH × 5 €)</span><span>${e0.format(dif)}</span></div><div class="t"><span>Du verdienst im Monat</span><span>${e0.format(own*BP+dif)}</span></div>`;
+    // 4
+    const tlInc=TL_BASE+g*(P*TL_BASE+FK2*2*EIN), per=P*tlInc+FK2*2*EIN, team=t*per, tlEH=(100+2*EIN)*(1+g);
+    $('r4').innerHTML=`+ ${e0.format(team)}<small>pro Monat</small>`; $('e4').textContent='Deine Teamleiter: '+eh(t*tlEH);
+    $('c4').innerHTML=`<div><span>Teamleiter im Minimum: 100 EH × 22 €</span><span>${e0.format(100*BP)}</span></div><div><span>+ Differenz 2 Newcomer (100 EH × 5 €)</span><span>${e0.format(2*EIN*DP)}</span></div>${g?`<div><span>+ von seinen ${g} Teamleitern</span><span>${e0.format(g*(P*TL_BASE+FK2*2*EIN))}</span></div>`:''}<div class="t"><span>Ein Teamleiter verdient</span><span>${e0.format(tlInc)}</span></div><div><span>30 % für dich</span><span>${e0.format(P*tlInc)}</span></div><div><span>+ 2 € × ${2*EIN} EH</span><span>${e0.format(FK2*2*EIN)}</span></div><div class="t"><span>× ${t} Teamleiter</span><span>${e0.format(team)}</span></div>`;
+    // 6: Ausfall
+    const a=t-fl, basePer=P*TL_BASE+FK2*2*EIN, failDif=2*EIN*DP, failTeam=g*basePer, failPer=failDif+failTeam, team6=a*per+fl*failPer, diff6=team6-team;
+    // 5: Pflicht mit aktiven Teamleitern
+    const req=a>=10?0:a>=5?150:300, lvl=a>=10?2:a>=5?1:0, title=a>=10?'Senior-Teamleiter':'Teamleiter';
+    $('s5').innerHTML=[['bis 4 Teamleiter','300 EH'],['ab 5 Teamleitern','150 EH'],['Senior ab 10','keine']].map((x,i)=>`<div class="st${i===lvl?' on':''}"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');
+    const met=own*3>=req && (n+a)>=2, jok=$('jk').checked&&!met; if(met) $('jk').checked=false; $('jw').hidden=met;
+    const qual=met||jok, teamFull=dif+fl*failPer+a*per, teamNow=qual?teamFull:0;
+    $('p5').className='pill '+(met?'ok':'no');
+    $('p5').textContent=met?(req?`Geschafft: ${n0.format(own*3)} von ${req} EH im Quartal`:`Senior-Teamleiter: keine Pflicht`):((n+a)<2?`Nicht geschafft: ${n+a} von 2 aktiven Leuten`:`Nicht geschafft: ${n0.format(own*3)} von ${req} EH im Quartal, es fehlen ${n0.format(req-own*3)}`);
+    const own5i=own*BP, dEin=dif, dFl=fl*failDif, tAct=a*per, tFl=fl*failTeam, team5=qual?teamFull:0, tot5=own5i+team5;
+    const ln=(lab,val,on)=>`<div><span>${lab}</span><span>${on?e0.format(val):'<s>'+e0.format(val)+'</s>'}</span></div>`;
+    $('c5').innerHTML=ln(`Schritt 2: deine Kunden (${n0.format(own)} EH × 22 €)`,own5i,true)
+      +ln(`Schritt 3: Differenz ${n} Newcomer`,dEin,qual)
+      +ln(`Schritt 4: ${a} Teamleiter × ${e0.format(per)}`,tAct,qual)
+      +(fl?ln(`Schritt 6: ${fl} ausgefallen, Differenz`,dFl,qual)+(g?ln(`Schritt 6: übernommene Teamleiter`,tFl,qual):''):'')
+      +`<div class="t"><span>Dein Monat</span><span>${e0.format(tot5)}</span></div>`;
+    $('e5').textContent=`Gruppe: ${n0.format(own+n*EIN+a*tlEH+fl*(50+2*EIN+g*(100+2*EIN)))} EH im Monat · ${n0.format((own+n*EIN+a*tlEH+fl*(50+2*EIN+g*(100+2*EIN)))*3)} EH im Quartal`;
+    $('w5').hidden=!(jok||!qual); $('w5').className='warn'+(jok?' soft':'');
+    $('w5').innerHTML=jok?`Joker eingesetzt: Du bekommst dein Teamgeld trotzdem. Den nächsten Joker gibt es in vier Quartalen.`:`Pflicht nicht geschafft: Du bekommst nur deine eigenen Kunden. Das Teamgeld von <b>${e0.format(teamFull)}</b> im Monat (<b>${e0.format(teamFull*3)}</b> im Quartal) fällt weg.`;
+    // 7
+    const ownInc=own*BP, d7=qual?dif+fl*failDif:0, t7=qual?a*per+fl*failTeam:0, tot=ownInc+d7+t7;
+    const grpEH=own+n*EIN+a*tlEH+fl*(50+2*EIN+g*(100+2*EIN));
+    const ehRow=`<div><span>Einheiten Gruppe im Monat</span><span>${n0.format(grpEH)} EH</span></div><div><span>Einheiten Gruppe im Quartal</span><span>${n0.format(grpEH*3)} EH</span></div>`;
+    // 6: baut auf allem auf – vorher (alle aktiv) und jetzt
+    const req0=t>=10?0:t>=5?150:300, met0=own*3>=req0&&(n+t)>=2, qual0=met0||$('jk').checked;
+    const before=ownInc+(qual0?dif+t*per:0), after=tot, d6=after-before;
+    $('r6').innerHTML=`${e0.format(after)}<small>pro Monat</small>`;
+    $('fl_lab').textContent=t===1?`Dein Teamleiter schafft sein Quartal nicht`:`Von deinen ${t} Teamleitern schaffen ihr Quartal nicht`;
+    $('e6').innerHTML=!t?`Stell auf Folie 4 zuerst Teamleiter ein`:!fl?`${t===1?'Dein Teamleiter ist':`Alle ${t} Teamleiter sind`} aktiv · schieb den Regler`:`vorher ${e0.format(before)} · ${d6>=0?'+ ':'− '}${e0.format(Math.abs(d6))} für dich`;
+    $('c6').innerHTML=`<div><span>Eigene Kunden (${n0.format(own)} EH)</span><span>${e0.format(ownInc)}</span></div>`
+      +`<div><span>Deine ${n} Newcomer</span><span>${e0.format(qual?dif:0)}</span></div>`
+      +`<div><span>${a} ${a===1?'aktiver':'aktive'} Teamleiter × ${e0.format(per)}</span><span>${e0.format(qual?a*per:0)}</span></div>`
+      +(fl?`<div><span>${fl} ausgefallen: keine 30 % mehr (statt ${e0.format(fl*per)})</span><span>0 €</span></div><div><span>+ Differenz ${fl===1?'seiner':'ihrer'} ${2*fl} Newcomer (${n0.format(fl*2*EIN)} EH × 5 €) an dich</span><span>${e0.format(qual?fl*failDif:0)}</span></div>`+(g?`<div><span>+ ${fl*g} übernommene Teamleiter × ${e0.format(basePer)}</span><span>${e0.format(qual?fl*failTeam:0)}</span></div>`:''):'')
+      +`<div class="t"><span>Dein Monat</span><span>${e0.format(after)}</span></div>`+ehRow
+      +(req!==req0?`<div><span style="color:#8c2626">Weniger aktive Teamleiter: deine Pflicht steigt auf ${req} EH</span><span></span></div>`:'')
+      +(!qual?`<div><span style="color:#8c2626">Deine Pflicht ist nicht geschafft: kein Teamgeld</span><span></span></div>`:'');
+    $('r7').innerHTML=`${e0.format(tot)}<small>pro Monat</small>`;
+    $('e7').textContent=`${e0.format(tot*12)} im Jahr · Gruppe: ${n0.format(grpEH)} EH im Monat · ${n0.format(grpEH*3)} EH im Quartal`;
+    const mx=Math.max(1,ownInc,d7,t7);
+    const c=(lab,val)=>`<span>${lab}: <b>${val}</b></span>`;
+    const ck=c('Kunden',kz(k)), cn=c('Newcomer',n), ct=c('Teamleiter',t), cg=g?c('je Teamleiter',g):'', cf=fl?c('ausgefallen',fl):'';
+    $('cy2').innerHTML=ck;
+    $('cy3').innerHTML=ck;
+    $('cy4').innerHTML=ck+cn;
+    $('cy5').innerHTML=cn+ct+cg+cf;
+    $('cy6').innerHTML=ct+cg;
+    $('cy7').innerHTML=ck+cn+ct+cg+cf;
+    $('b7').innerHTML=[['Eigene Kunden',ownInc,'#13294b'],['Newcomer',d7,'#93aad2'],['Teamleiter',t7,'#e8762c']].map(r=>`<div class="bar"><span>${r[0]}</span><span class="tr"><i style="width:${r[1]/mx*100}%;background:${r[2]}"></i></span><span class="v">${e0.format(r[1])}</span></div>`).join('');
+  }
+
+  let cur=0; const N=NAMES.length;
+  $('dots').innerHTML=NAMES.map((nm,i)=>`<button type="button" data-i="${i}" role="tab"><i></i><span>${i+1} ${nm}</span></button>`).join('');
+  function go(i){
+    cur=Math.max(0,Math.min(N-1,i));
+    $('track').style.transform=`translateX(-${cur*100}%)`;
+    document.querySelectorAll('#dots button').forEach((b,j)=>{ b.classList.toggle('done',j<cur); if(j===cur) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+    document.querySelectorAll('.slide').forEach((s,j)=>{ s.setAttribute('aria-hidden',String(j!==cur)); s.inert=j!==cur; });
+    $('counter').textContent=`${cur+1} / ${N}`;
+    $('prev').disabled=cur===0; $('next').textContent=cur===N-1?'Von vorn':'Weiter';
+  }
+  $('dots').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) go(+b.dataset.i);});
+  $('prev').addEventListener('click',()=>go(cur-1));
+  $('next').addEventListener('click',()=>go(cur===N-1?0:cur+1));
+  document.addEventListener('keydown',e=>{
+    if(e.target.matches('input')) return;
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); go(cur+1); }
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+  });
+  let sx=null, sy=null;
+  $('track').addEventListener('touchstart',e=>{ if(e.target.matches('input')){sx=null;return;} sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+  $('track').addEventListener('touchend',e=>{ if(sx===null) return; const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy; if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5) go(cur+(dx<0?1:-1)); sx=null; },{passive:true});
+  ['k','n','t','g','fl','jk'].forEach(id=>$(id).addEventListener('input',render));
+  const DEF={k:4,n:2,t:4,g:0,fl:0};
+  $('reset').addEventListener('click',()=>{
+    for(const id in DEF){ $(id).value=DEF[id]; } $('k5').value=DEF.k; $('jk').checked=false;
+    render(); go(0);
+    const el=document.createElement('div'); el.className='toast'; el.setAttribute('role','status'); el.textContent='Alle Werte zurückgesetzt'; document.body.appendChild(el); setTimeout(()=>el.remove(),1800);
+  });
+  $('k5').addEventListener('input',()=>{ $('k').value=$('k5').value; render(); });
+  render(); go(0);
+})();
+</script>
+
+</body>
+</html>
